@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./netesay.js"></script>
+    <style>
+        *{
+        margin: 0%;
+        padding: 0%;
+    }
+    html,body{
+        height: 100%;
+        width: 100%;
+        background-color: #f2f2f2;
+    }
+    .songsname{
+        width: 550px;
+        height: 600px;
+        margin: 10px auto;
+        background-color: white;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        transform: translateY(-900px);
+				transition: all .5s; 
+    }
+    .gc{
+        width: 550px;
+        height: 600px;
+        margin: 10px auto;
+        background-color: rgba(12, 248, 150, 0.9);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: center;
+        position: relative;
+        transform: translateY(00px);
+        transition: all .5s; 
+        opacity: 0;
+       
+    }
+    .gc.active{
+				transform: translateY(-610px);
+			}
+    .songsname.active{
+				transform: translateY(00px);
+			}
+    .d1{
+        height: 60px;
+        line-height: 30px;                                                                  
+        text-overflow: ellipsis;
+        cursor: pointer;
+        
+    }
+    .d1 h4{
+        margin: 0px 10px;
+    }
+    .d1 h6{
+        margin: 0px 10px;
+    }
+    .meiyihang{
+        height: 30px;
+        line-height: 30px;
+       
+        text-align: center;
+            }
+          
+            .geciul{
+                position: absolute;
+     
+                width: 550px;
+        height: 600px;
+        transform: translateY(0px);
+				transition: all 2s; 
+        z-index: 10;
+            }
+            .geciul.active{
+                transform: translateY(-30px);
+            }
+            .back{
+             position: absolute;
+           top:0;
+           left: 0;
+           height: 30px;
+           width: 60px;
+           color: rgba(255,255,255,0.5);
+           background-color: rgba(236, 217, 217,0.5);
+           border-radius: 20%;
+           display: none;
+           cursor: pointer;
+           z-index: 100;
+            }
+            .up{
+             position: absolute;
+           top:0;
+           right:0 ;
+           height: 30px;
+           width: 60px;
+           color: rgba(255,255,255,0.5);
+           background-color: rgba(236, 217, 217,0.5);
+           border-radius: 20%;
+           display: none;
+           cursor: pointer;
+           z-index: 100;
+        
+            }
+            #input{
+                margin-left: 10px;
+            
+    border-radius: 4px; 
+                background-color: rgba(54, 48, 48,0.5);
+                color: white;
+            height: 25px;
+            margin: 0 auto;
+           
+            }
+            #btn
+            {
+                height: 25px;
+                width: 40px;
+                border-radius: 4px ; 
+               
+            }
+            #player{
+                margin: 0 auto;
+                display: block;
+            }
+            .top{
+                height: 80px;
+               margin: 0 auto;
+                
+            }
+            .in{
+                width: 230px;
+                height: 80px;
+               margin: 0 auto;
+                
+            }.topname{
+                height: 45px;
+            }
+            .topname h6{
+                height: 20px;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="top">
+        <div class="in">
+            <input type="text" id="input">
+            <button id="btn">搜索</button>
+            <!-- <div class="topname">
+                <h4>无歌曲</span></h4>
+                <h6><span>歌手</span>-name </h6>
+            </div> -->
+        </div>
+
+    </div>
+    <audio src=" " id="player" controls="controls"></audio>
+
+
+    <div class="songsname">
+        <!-- <div class="d1">
+            <h4>songs</h4>
+            <h6><span>歌手</span>-name <span>专辑</span>-zuan</h6><hr>
+            
+        </div> -->
+    </div>
+    <div class="gc">
+        <div class="back">返回</div>
+        <div class="up">UP</div>
+        <ul class="geciul">
+            <!-- <li class="meiyihang">1</li> -->
+        </ul>
+    </div>
+
+    <script>
+        var songsname = document.getElementsByClassName("songsname")[0];
+        var btn = document.getElementById("btn");
+        var inp = document.getElementById("input")
+        var player = document.getElementById("player");
+        var geciul = document.getElementsByClassName("geciul")[0]
+        var gc = document.getElementsByClassName("gc")[0]
+        var back = document.getElementsByClassName("back")[0]
+        var up = document.getElementsByClassName("up")[0]
+        var topname = document.getElementsByClassName("topname")[0]
+        var quanjucicidujixiang = []
+        var index = 0
+        var nextid = 0;
+        var next = 0;
+        geciul.style.top = 330 + "px"
+
+
+        btn.addEventListener("click", function () {
+            getsongs(inp.value);
+            gc.className = "gc";
+
+        })
+        var filllyc = function (geci) {
+            var str = "";
+            var tmp = ' <li class="meiyihang">1</li>'
+            for (var i = 0; i < geci.length; i++) {
+                str += tmp.replace("1", geci[i].content)
+                geciul.innerHTML = str;
+            }
+
+
+        }
+        var jiexi = function (str) {
+            var chulitime = function (time) {
+                var sce = 0;
+                var timesp = time.split(":");
+                sce = parseInt(timesp[0]) * 60 + parseInt(timesp[1])
+                return sce;
+            }
+            var geci = [];
+            var geciobj = [];
+            geci = str.split("\n");
+            for (var i = 0; i < geci.length; i++) {
+                var line = [];
+                line = geci[i].split("]")
+                var time = line[0].slice(1, line[0].length)
+
+                var content = line[1];
+
+                var shijian = chulitime(time);
+                console.log(shijian)
+                if (isNaN(shijian)) continue;
+                geciobj.push({
+                    time: shijian,
+                    content: content
+                })
+
+            }
+            console.log(geciobj)
+            quanjucicidujixiang = geciobj
+            return geciobj;
+        }
+
+        var geturl = function (id, callback) {
+            get("GET", "http://localhost:3000/song/url", { id: id }, function (res) {
+
+                var url1 = JSON.parse(res).data[0].url;
+                // console.log(url1);
+                if (callback) {
+                    callback(JSON.parse(res).data[0].url);
+                }
+            })
+        }
+
+        var getlyr = function (id, callback) {
+            get("GET", "http://localhost:3000/lyric", { id: id }, function (res) {
+
+
+                var lyc = JSON.parse(res).lrc.lyric;
+                // console.log(lyc);
+                if (callback) {
+                    callback(lyc);
+                }
+            })
+        }
+
+        var getsongs = function (keywords, callback) {
+            get("GET", "http://localhost:3000/search", { keywords }, function (res) {
+                console.log(JSON.parse(res).result.songs);
+                var songslist = JSON.parse(res).result.songs;
+
+                var str = "";
+                var tmp = '<div class="d1" date-id="111">' +
+                    ' <h4>songs</h4>' +
+                    ' <h6><span>歌手</span>-name <span>专辑</span>-zuan</h6><hr>' + ' </div>';
+                songslist.forEach(function (item, index) {
+                    str += tmp.replace("songs", item.name).replace("name", item.artists[0].name).replace("zuan", item.album.name)
+                        .replace("111", item.id);
+                });
+                songsname.innerHTML = str;
+                songsname.className = "songsname active"
+                var d1 = document.getElementsByClassName("d1");
+                var clear = function () {
+                    for (var i = 0; i < d1.length; i++) {
+                        d1[i].style.color = "black"
+                    }
+                }
+                for (var i = 0; i < d1.length; i++) {
+                    d1[i].addEventListener("click", function () {
+                        index = 0
+                        geciul.style.top = 330 + "px"
+                        back.style.display = "block";
+                        gc.style.opacity = 1;
+                        gc.className = "gc active"
+                        x = 330;
+                        clear();
+                        this.style.color = "#ff6700"
+                        // console.log(songslist[i])
+                        // topname.innerHTML=JSON.stringify(this);
+                        var thisid = this.getAttribute("date-id")
+                        nextid = this.nextSibling;
+                        next = nextid.getAttribute("date-id");
+                        geturl(thisid, function (url) {
+                            // console.log(url)
+                            player.src = url;
+                            player.play();
+
+                        })
+                        getlyr(thisid, function (geci) {
+                            // console.log(geci);
+                            var gc1 = jiexi(geci);
+                            if (gc1.length == 0) {
+                                gc1 = [{
+                                    time: 0,
+                                    content: "暂无歌词"
+                                }]
+                            }
+                            filllyc(gc1)
+
+                        })
+                        songsname.className = "songsname active"
+                    })
+                }
+                if (callback) {
+                    callback(songslist);
+                }
+            });
+        }
+        var x = 330;
+        player.addEventListener("timeupdate", function () {
+            var meiyijugeci = document.getElementsByClassName("meiyihang")
+            for (var i = 0; i < quanjucicidujixiang.length; i++) {
+                if (Math.abs(quanjucicidujixiang[i].time - player.currentTime) < 0.3) {
+                    meiyijugeci[i].style.color = "hotpink"
+                    if (index > i) {
+                        index--;
+                    }
+                    else {
+                        x -= 30;
+                        geciul.style.top = x + "px"
+
+                        if (index < i) {
+                            index == i;
+                        }
+                    }
+
+                    console.log(index);
+
+                    console.log(geciul.style.top)
+                    if (index > 0) {
+                        meiyijugeci[i - 1].style.color = "black"
+                        meiyijugeci[0].style.color = "black"
+                    }
+                    index++
+
+                }
+            }
+        })
+        player.addEventListener("ended", function () {
+            index = 0
+            x = 330;
+            geciul.style.top = 330 + "px"
+            geturl(next, function (url) {
+                // console.log(url)
+                player.src = url;
+                player.play();
+
+            })
+            getlyr(next, function (geci) {
+                // console.log(geci);
+                var gc = jiexi(geci);
+
+                filllyc(gc)
+
+            })
+            nextid = nextid.nextSibling;
+            next = nextid.getAttribute("date-id");
+        })
+        back.addEventListener("click", function () {
+            gc.className = "gc";
+            back.style.display = "none";
+            up.style.display = "block";
+        })
+        up.addEventListener("click", function () {
+            gc.className = "gc active";
+            back.style.display = "block";
+            up.style.display = "none";
+        })
+
+    </script>
+</body>
+
+</html>
